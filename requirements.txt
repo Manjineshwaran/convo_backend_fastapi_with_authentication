@@ -15,5 +15,9 @@ python-dotenv==1.0.0
 # Data Validation
 pydantic==2.4.2
 
-# Async (required by modern FastAPI/SQLAlchemy)
+# AI/LangChain
+langchain==0.0.346
+openai==0.28.0
+
+# Async
 anyio==3.7.1
