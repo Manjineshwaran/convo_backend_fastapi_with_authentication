@@ -1,0 +1,15 @@
+# Database
+sqlalchemy==2.0.21
+
+# Authentication
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# Environment
+python-dotenv==1.0.0
+
+# Data Validation
+pydantic==2.4.2
+
+# Async (required by modern FastAPI/SQLAlchemy)
+anyio==3.7.1
