@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 origins = [
-    "https://convo-frontend-reactjs.onrender.com/",
+    "https://convo-frontend-reactjs.onrender.com",
     "http://localhost:3000",  # React default port
     "http://127.0.0.1:3000",
 ]
