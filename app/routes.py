@@ -4,11 +4,13 @@ from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from dotenv import load_dotenv
 import os
 
 # from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 from app import auth, models, schemas, security
 from app.db import get_db
@@ -121,29 +123,35 @@ async def login_for_access_token(
 
 @router.post("/conversation/")
 async def read_conversation(
-    query: str,
+    query: schemas.ConversationQuery,
     current_user: schemas.UserInDB = Depends(auth.get_current_user),
     db: Session = Depends(get_db),
 ):
-    print("\ncurrent_user\n",current_user,"\ntype:  ",type(current_user))
+    print("\ncurrent_user\n", current_user, "\ntype:  ", type(current_user))
     print("===============================")
     
     db_user = db.query(User).get(current_user.id)
-    print("\ndb_user\n",db_user,"\ntype:  ",type(db_user))
+    print("\ndb_user\n", db_user, "\ntype:  ", type(db_user))
     print("===============================")
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
     context = generate_context(db_user)
 
-    # llm = OpenAI(
-    #     temperature=0,
-    #     openai_api_key=os.environ.get("OPENAI_API_KEY"),
-    # )
-    # prompt = PromptTemplate(
-    #     input_variables=["context", "question"], template=qa_template
-    # )
-    # chain = LLMChain(llm=llm, prompt=prompt)
+    GEMINI_API_KEY = "AIzaSyAX9FB7lVP-5dDYGsri3cHMd9di6ebp0eQ"
 
-    # response = chain.run(context=context, question=query)
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+    print("\n env key:", GEMINI_API_KEY)
+    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.2, google_api_key=GEMINI_API_KEY)
+    
+    print("\nllm:", llm)
+    prompt = PromptTemplate(
+        input_variables=["context", "question"], template=qa_template
+    )
+    chain = LLMChain(llm=llm, prompt=prompt)
+    print("\nchain\n", chain)
 
-    return {"response": "Message received"}
+    response = chain.run(context=context, question=query)
+
+    print("\nresponse\n", response, "\ntype:  ", type(response))
+
+    return {"response": response}
