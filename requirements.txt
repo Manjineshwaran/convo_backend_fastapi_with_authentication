@@ -22,6 +22,6 @@ openai==0.28.0
 # Async
 anyio==3.7.1
 
-
-
+python-dotenv==1.0.0 
+langchain_google_genai==0.0.1 
 python-multipart==0.0.6 
